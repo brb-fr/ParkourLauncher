@@ -1,0 +1,10 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1754341192
+anim.tscn::PackedScene::-1::1754341171::0::1::::<><><>0<>0<><>::
+control.gd::GDScript::8367466248404004047::1754339862::0::1::::<>ColorRect<><>0<>0<><>::
+control.tscn::PackedScene::5579589625899107957::1754340865::0::1::::<><><>0<>0<><>::uid://b8uwlkspwduxq::::res://parkour-rounded.png<>uid://drhi7gjr2u4bj::::res://control.gd<>uid://blygetvhedlw2::::res://thing.tres
+icon.svg::CompressedTexture2D/CompressedTexture2D::7643936369137871233::1748539866::1748539907::1::::<><><>0<>0<>b7436c55c2cd9b4ba9de98601682b2f2<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
+loading-icon.png::CompressedTexture2D::291439907920296567::1754341192::1754341193::1::::<><><>0<>0<>f6087571954761399a842cd5fc29cae3<>res://.godot/imported/loading-icon.png-0634fee93ce0d758c501e75c6b10436f.ctex::
+parkour-rounded.png::CompressedTexture2D/CompressedTexture2D::4745296050154234822::1754338976::1754338977::1::::<><><>0<>0<>1ec4a78dc6cdfbaa06f595ace929d624<>res://.godot/imported/parkour-rounded.png-150c50be2dec97c793aa3a3452ad1f35.ctex::
+Parkour.png::CompressedTexture2D/CompressedTexture2D::5024572035850513108::1754338809::1754338809::1::::<><><>0<>0<>ae7afba89c01f90181bc98063023baa0<>res://.godot/imported/Parkour.png-fa6265b9655581b0bad9e23f9460268d.ctex::
+thing.tres::StyleBoxFlat::3208415505649180459::1754340804::0::1::::<><><>0<>0<><>::

@@ -1,0 +1,217 @@
+[gd_scene load_steps=10 format=3 uid="uid://clq2a487longv"]
+
+[ext_resource type="Texture2D" uid="uid://b8uwlkspwduxq" path="res://parkour-rounded.png" id="1_0fbet"]
+[ext_resource type="Script" uid="uid://drhi7gjr2u4bj" path="res://control.gd" id="1_62e2m"]
+[ext_resource type="StyleBox" uid="uid://blygetvhedlw2" path="res://thing.tres" id="3_qtu10"]
+[ext_resource type="PackedScene" path="res://anim.tscn" id="4_kbped"]
+[ext_resource type="Texture2D" uid="uid://eff8cpe0686n" path="res://loading-icon.png" id="5_fj5cn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qtu10"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uchyk"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kbped"]
+bg_color = Color(0.198886, 0.243664, 0.506636, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 2
+border_width_bottom = 3
+border_color = Color(0.112255, 0.121544, 0.228032, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fj5cn"]
+bg_color = Color(0, 0, 0, 0.211765)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.112255, 0.121544, 0.228032, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="Main" type="ColorRect"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.894118)
+script = ExtResource("1_62e2m")
+
+[node name="UP" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 48.0
+grow_horizontal = 2
+color = Color(0, 0, 0, 0.835294)
+
+[node name="Icon" type="TextureRect" parent="UP"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_right = 40.0
+grow_vertical = 2
+texture = ExtResource("1_0fbet")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="UP/Icon"]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 7.695
+offset_right = 199.695
+grow_horizontal = 0
+grow_vertical = 2
+text = "Parkour: Rewrite"
+vertical_alignment = 1
+
+[node name="Sensor" type="Button" parent="UP"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_qtu10")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_qtu10")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_qtu10")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_qtu10")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_qtu10")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_qtu10")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_qtu10")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_qtu10")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_qtu10")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_qtu10")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_qtu10")
+
+[node name="X" type="Button" parent="UP"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -20.0
+offset_right = -14.0
+offset_bottom = 20.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(1.095, 1)
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/focus = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_uchyk")
+text = "X"
+
+[node name="-" type="Button" parent="UP"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -90.0
+offset_top = -20.0
+offset_right = -57.0
+offset_bottom = 20.0
+grow_horizontal = 0
+grow_vertical = 2
+scale = Vector2(1.095, 1)
+theme_override_colors/font_color = Color(0.517647, 0.517647, 1, 1)
+theme_override_colors/font_focus_color = Color(0.517647, 0.517647, 1, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/focus = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_uchyk")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_uchyk")
+text = "-"
+
+[node name="LOWER" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -48.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = ExtResource("3_qtu10")
+
+[node name="Bar" type="ProgressBar" parent="LOWER"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/background = ExtResource("3_qtu10")
+theme_override_styles/fill = SubResource("StyleBoxFlat_kbped")
+show_percentage = false
+
+[node name="Loading" parent="LOWER" instance=ExtResource("4_kbped")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -122.61
+offset_top = -100.5
+offset_right = 69.39
+offset_bottom = 100.5
+grow_horizontal = 0
+pivot_offset = Vector2(96, 100)
+texture = ExtResource("5_fj5cn")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Play" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -97.0
+offset_top = -23.0
+offset_right = 97.0
+offset_bottom = 23.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_fj5cn")
+text = "Download Parkour"
+
+[node name="Anim" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Play")
+
+[connection signal="button_down" from="UP/Sensor" to="." method="_on_sensor_button_down"]
+[connection signal="button_up" from="UP/Sensor" to="." method="_on_sensor_button_up"]
+[connection signal="pressed" from="UP/X" to="." method="_on_x_pressed"]
+[connection signal="pressed" from="UP/-" to="." method="_on__pressed"]
+
+[editable path="LOWER/Loading"]
