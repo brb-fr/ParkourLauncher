@@ -1,9 +1,17 @@
 extends ColorRect
 
 var holding := false
-var last_pos :=Vector2i()
+var last_pos := Vector2i()
 @onready var downloader: HTTPRequest = $Downloader
 @onready var github: HTTPRequest = $GithubGetter
+
+var downloading := false
+var last_bytes := 0
+var current_bytes := 0
+var Dsize := 123.0
+
+var last_time := 0.0
+var speed := 0.0
 
 func _on_sensor_button_down() -> void:
 	holding = true
@@ -11,29 +19,48 @@ func _on_sensor_button_down() -> void:
 
 func _on_sensor_button_up() -> void:
 	holding = false
+
 func _process(delta: float) -> void:
 	if holding:
-		DisplayServer.window_set_position(DisplayServer.mouse_get_position()-last_pos)
-
+		DisplayServer.window_set_position(DisplayServer.mouse_get_position() - last_pos)
+	
+	if downloading:
+		var now_time = Time.get_ticks_msec() / 1000.0
+		current_bytes = downloader.get_downloaded_bytes()
+		
+		# update speed every 0.25 seconds
+		if now_time - last_time >= 1.5:
+			var delta_bytes = current_bytes - last_bytes
+			speed = delta_bytes / (now_time - last_time) / 1_000_000.0 # MB/s
+			last_time = now_time
+			last_bytes = current_bytes
+		
+		var downloaded_mb = snapped(current_bytes / 1_000_000.0, 0.1)
+		var total_mb = snapped(Dsize / 1.048576, 0.1)
+		var speed_str = "%.1f" % speed
+		
+		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\n%s / %sMB - %sMB/s" % [downloaded_mb, total_mb, speed_str]
+		$LOWER/Bar.value = calcPercentage(downloaded_mb, total_mb)
 
 func _on_x_pressed() -> void:
 	get_tree().quit()
 
-
 func _on__pressed() -> void:
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MINIMIZED)
 
-#[b]Downlaoding Parkour...[/b]\nRetrieving necessary packages...
-#[b]Launching Parkour[/b]\nExecuting Parkour.exe
-#[b]Downloading Parkour...[/b]\n0 / 123MB - 1MB/s
-#[b]Downloading Parkour...[/b]\nPreparing...
-
 func _on_play_pressed() -> void:
 	$Anim.play("play")
-	$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nRetrieving necessary packages..."
+	downloader.download_file = "user://Parkour.exeb"
+	$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nRetrieving necessary data..."
+	
 	github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
 	var gh = await github.request_completed
-	if gh[0] == 200:
-		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nPreparing..."
-		downloader.request(JSON.parse_string(gh[3].get_string_from_utf8().mirror))
-		var dw = dow
+	$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nPreparing..."
+	
+	var dat = JSON.parse_string(gh[3].get_string_from_utf8())
+	downloader.request(dat.mirror)
+	Dsize = dat.size
+	downloading = true
+
+func calcPercentage(partialValue, totalValue) -> float:
+	return float(partialValue / totalValue) * 100.0
