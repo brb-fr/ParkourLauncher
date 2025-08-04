@@ -1,9 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://clq2a487longv"]
+[gd_scene load_steps=15 format=3 uid="uid://clq2a487longv"]
 
 [ext_resource type="Texture2D" uid="uid://b8uwlkspwduxq" path="res://parkour-rounded.png" id="1_0fbet"]
 [ext_resource type="Script" uid="uid://drhi7gjr2u4bj" path="res://control.gd" id="1_62e2m"]
 [ext_resource type="StyleBox" uid="uid://blygetvhedlw2" path="res://thing.tres" id="3_qtu10"]
-[ext_resource type="PackedScene" path="res://anim.tscn" id="4_kbped"]
+[ext_resource type="PackedScene" uid="uid://05wtax12ju31" path="res://anim.tscn" id="4_kbped"]
 [ext_resource type="Texture2D" uid="uid://eff8cpe0686n" path="res://loading-icon.png" id="5_fj5cn"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qtu10"]
@@ -21,6 +21,19 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kbped"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iy58a"]
+bg_color = Color(0, 0, 0, 0.301961)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.112255, 0.121544, 0.228032, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fj5cn"]
 bg_color = Color(0, 0, 0, 0.211765)
 border_width_left = 3
@@ -31,7 +44,140 @@ border_color = Color(0.112255, 0.121544, 0.228032, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+
+[sub_resource type="Animation" id="Animation_kbped"]
+resource_name = "play"
+length = 0.8
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(-3, 1),
+"update": 0,
+"values": [Vector2(0, 544), Vector2(0, 600)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = false
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.39, 0.4),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, true, false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../LOWER:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../LOWER:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.7),
+"transitions": PackedFloat32Array(1, -2.75, 1),
+"update": 0,
+"values": [Vector2(0, 600), Vector2(0, 600), Vector2(0, 536)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".:size")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.3),
+"transitions": PackedFloat32Array(1, -2, 1),
+"update": 0,
+"values": [Vector2(184, 56), Vector2(184, 56), Vector2(568, 56)]
+}
+
+[sub_resource type="Animation" id="Animation_fj5cn"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(188, 277)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../LOWER:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../LOWER:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 600)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".:size")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(184, 56)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_iy58a"]
+_data = {
+&"RESET": SubResource("Animation_fj5cn"),
+&"play": SubResource("Animation_kbped")
+}
 
 [node name="Main" type="ColorRect"]
 anchors_preset = 15
@@ -154,12 +300,13 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_uchyk")
 text = "-"
 
 [node name="LOWER" type="Panel" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -48.0
+offset_bottom = 64.0
 grow_horizontal = 2
 grow_vertical = 0
 theme_override_styles/panel = ExtResource("3_qtu10")
@@ -173,45 +320,71 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/background = ExtResource("3_qtu10")
 theme_override_styles/fill = SubResource("StyleBoxFlat_kbped")
-show_percentage = false
 
 [node name="Loading" parent="LOWER" instance=ExtResource("4_kbped")]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -122.61
+offset_left = -127.665
 offset_top = -100.5
-offset_right = 69.39
+offset_right = 64.335
 offset_bottom = 100.5
 grow_horizontal = 0
+scale = Vector2(0.165, 0.165)
 pivot_offset = Vector2(96, 100)
 texture = ExtResource("5_fj5cn")
 expand_mode = 1
 stretch_mode = 5
 
+[node name="Text" type="RichTextLabel" parent="LOWER"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 9.0
+offset_top = 3.0
+offset_right = 291.0
+offset_bottom = -3.0
+grow_vertical = 2
+bbcode_enabled = true
+vertical_alignment = 1
+
 [node name="Play" type="Button" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -97.0
-offset_top = -23.0
-offset_right = 97.0
-offset_bottom = 23.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 188.0
+offset_top = -323.0
+offset_right = 372.0
+offset_bottom = -267.0
+grow_vertical = 0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_kbped")
+theme_override_styles/hover = SubResource("StyleBoxFlat_iy58a")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fj5cn")
 theme_override_styles/normal = SubResource("StyleBoxFlat_fj5cn")
-text = "Download Parkour"
+text = "Download
+Parkour"
 
 [node name="Anim" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Play")
+libraries = {
+&"": SubResource("AnimationLibrary_iy58a")
+}
+autoplay = "play"
+
+[node name="Downloader" type="HTTPRequest" parent="."]
+download_chunk_size = 450000
+use_threads = true
+
+[node name="GithubGetter" type="HTTPRequest" parent="."]
+download_chunk_size = 450000
+use_threads = true
 
 [connection signal="button_down" from="UP/Sensor" to="." method="_on_sensor_button_down"]
 [connection signal="button_up" from="UP/Sensor" to="." method="_on_sensor_button_up"]
 [connection signal="pressed" from="UP/X" to="." method="_on_x_pressed"]
 [connection signal="pressed" from="UP/-" to="." method="_on__pressed"]
+[connection signal="pressed" from="Play" to="." method="_on_play_pressed"]
 
 [editable path="LOWER/Loading"]

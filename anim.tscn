@@ -1,6 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://cdv7vwc71mldg"]
+[gd_scene load_steps=5 format=3 uid="uid://05wtax12ju31"]
 
-[ext_resource type="Texture2D" uid="uid://bbu2vyhc5lu48" path="res://sprite-assets/loading-icon.png" id="1_h71t7"]
+[ext_resource type="Texture2D" uid="uid://eff8cpe0686n" path="res://loading-icon.png" id="1_vmnuw"]
 
 [sub_resource type="Animation" id="Animation_arjad"]
 length = 0.001
@@ -54,7 +54,7 @@ grow_horizontal = 2
 grow_vertical = 2
 scale = Vector2(0.15, 0.15)
 pivot_offset = Vector2(148, 148)
-texture = ExtResource("1_h71t7")
+texture = ExtResource("1_vmnuw")
 
 [node name="Anim" type="AnimationPlayer" parent="."]
 libraries = {
