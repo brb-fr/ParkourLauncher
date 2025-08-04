@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://clq2a487longv"]
+[gd_scene load_steps=16 format=3 uid="uid://clq2a487longv"]
 
 [ext_resource type="Texture2D" uid="uid://b8uwlkspwduxq" path="res://parkour-rounded.png" id="1_0fbet"]
 [ext_resource type="Script" uid="uid://drhi7gjr2u4bj" path="res://control.gd" id="1_62e2m"]
@@ -20,6 +20,18 @@ border_color = Color(0.112255, 0.121544, 0.228032, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6a6wx"]
+bg_color = Color(0, 0, 0, 0.211765)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.112255, 0.121544, 0.228032, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kbped"]
 
@@ -349,6 +361,21 @@ theme_override_fonts/bold_font = ExtResource("5_kbped")
 bbcode_enabled = true
 vertical_alignment = 1
 
+[node name="Button" type="Button" parent="LOWER"]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -82.0
+offset_top = 16.0
+offset_right = -18.0
+offset_bottom = -16.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_6a6wx")
+text = "Retry"
+
 [node name="Play" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 2
@@ -383,5 +410,6 @@ use_threads = true
 [connection signal="pressed" from="UP/X" to="." method="_on_x_pressed"]
 [connection signal="pressed" from="UP/-" to="." method="_on__pressed"]
 [connection signal="pressed" from="Play" to="." method="_on_play_pressed"]
+[connection signal="request_completed" from="Downloader" to="." method="_on_downloader_request_completed"]
 
 [editable path="LOWER/Loading"]

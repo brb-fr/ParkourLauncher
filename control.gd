@@ -64,3 +64,16 @@ func _on_play_pressed() -> void:
 
 func calcPercentage(partialValue, totalValue) -> float:
 	return float(partialValue / totalValue) * 100.0
+
+
+func _on_downloader_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
+	if result == OK:
+		print("done: ",result)
+	else:
+		print(str("err: ",result))
+		if result ==4:
+			$LOWER/Text.text = "[b]Download Failed[/b]\nInternet disconnected."
+		else:
+			$LOWER/Text.text = "[b]Download Failed[/b]\nError code: %s."%str(result)
+		
+	downloading = false
