@@ -50,7 +50,7 @@ func _on__pressed() -> void:
 
 func _on_play_pressed() -> void:
 	$Anim.play("play")
-	downloader.download_file = "user://Parkour.exeb"
+	downloader.download_file = "user://Parkour.exe"
 	$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nRetrieving necessary data..."
 	
 	github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
