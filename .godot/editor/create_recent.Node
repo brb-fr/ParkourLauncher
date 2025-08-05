@@ -1,9 +1,9 @@
+Label
 Button
 RichTextLabel
 HTTPRequest
 AnimationPlayer
 ProgressBar
 Panel
-Label
 TextureRect
 ColorRect

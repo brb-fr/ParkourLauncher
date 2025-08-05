@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://clq2a487longv"]
+[gd_scene load_steps=17 format=3 uid="uid://clq2a487longv"]
 
 [ext_resource type="Texture2D" uid="uid://b8uwlkspwduxq" path="res://parkour-rounded.png" id="1_0fbet"]
 [ext_resource type="Script" uid="uid://drhi7gjr2u4bj" path="res://control.gd" id="1_62e2m"]
@@ -20,6 +20,8 @@ border_color = Color(0.112255, 0.121544, 0.228032, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fj5cn"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6a6wx"]
 bg_color = Color(0, 0, 0, 0.211765)
@@ -354,14 +356,15 @@ anchors_preset = 9
 anchor_bottom = 1.0
 offset_left = 9.0
 offset_top = 3.0
-offset_right = 291.0
+offset_right = 512.0
 offset_bottom = -3.0
 grow_vertical = 2
 theme_override_fonts/bold_font = ExtResource("5_kbped")
 bbcode_enabled = true
 vertical_alignment = 1
 
-[node name="Button" type="Button" parent="LOWER"]
+[node name="Retry" type="Button" parent="LOWER"]
+visible = false
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
@@ -373,6 +376,16 @@ offset_right = -18.0
 offset_bottom = -16.0
 grow_horizontal = 0
 grow_vertical = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_fj5cn")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxFlat_6a6wx")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_6a6wx")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_6a6wx")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_6a6wx")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_6a6wx")
+theme_override_styles/hover = SubResource("StyleBoxFlat_6a6wx")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_6a6wx")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6a6wx")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_6a6wx")
 theme_override_styles/normal = SubResource("StyleBoxFlat_6a6wx")
 text = "Retry"
 
@@ -398,7 +411,6 @@ libraries = {
 }
 
 [node name="Downloader" type="HTTPRequest" parent="."]
-download_chunk_size = 450000
 use_threads = true
 
 [node name="GithubGetter" type="HTTPRequest" parent="."]
@@ -409,6 +421,7 @@ use_threads = true
 [connection signal="button_up" from="UP/Sensor" to="." method="_on_sensor_button_up"]
 [connection signal="pressed" from="UP/X" to="." method="_on_x_pressed"]
 [connection signal="pressed" from="UP/-" to="." method="_on__pressed"]
+[connection signal="pressed" from="LOWER/Retry" to="." method="_on_retry_pressed"]
 [connection signal="pressed" from="Play" to="." method="_on_play_pressed"]
 [connection signal="request_completed" from="Downloader" to="." method="_on_downloader_request_completed"]
 
