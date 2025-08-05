@@ -48,22 +48,47 @@ func _on__pressed() -> void:
 	DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MINIMIZED)
 
 func _on_play_pressed() -> void:
-	$LOWER/Retry.hide()
-	$LOWER/Loading.show()
-	$LOWER/Bar.show()
+	$LOWER/Retry.text = "RETRY"
+	$LOWER/Bar.show_percentage=true
 	$Anim.play("play")
-	downloader.download_file = "user://Parkour.exe"
-	$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nRetrieving necessary data..."
+	if !FileAccess.file_exists(ProjectSettings.globalize_path("user://Parkour.exe")):
+		$LOWER/Retry.hide()
+		$LOWER/Loading.show()
+		$LOWER/Bar.show()
+		downloader.download_file = ProjectSettings.globalize_path("user://Parkour.exe")
+		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nRetrieving necessary data..."
 
-	github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
-	var gh = await github.request_completed
-	$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nPreparing..."
-
-	var dat = JSON.parse_string(gh[3].get_string_from_utf8())
-	downloader.request(dat.mirror)
-	Dsize_bytes = dat.size  # now in bytes
-	downloading = true
-
+		github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
+		var gh = await github.request_completed
+		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nPreparing..."
+		var dat = JSON.parse_string(gh[3].get_string_from_utf8())
+		downloader.request(dat.mirror)
+		Dsize_bytes = dat.size  # now in bytes
+		downloading = true
+	else:
+		$LOWER/Bar.value = 100
+		$LOWER/Text.text = "[b]Launching Parkour...[/b]\nCalculating bytes..."
+		github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
+		var gh = await github.request_completed
+		var dat = JSON.parse_string(gh[3].get_string_from_utf8())
+		await get_tree().create_timer(0.5).timeout
+		if FileAccess.get_file_as_bytes(ProjectSettings.globalize_path("user://Parkour.exe")).size() >= dat.size - 50:
+			$LOWER/Text.text = "[b]Launching Parkour...[/b]\nRunning Parkour.exe..."
+			OS.shell_open(ProjectSettings.globalize_path("user://Parkour.exe"))
+			await get_tree().create_timer(2.0).timeout
+			if is_process_running("Parkour"):
+				$LOWER/Retry.show()
+				$LOWER/Retry.text = "EXIT"
+				$LOWER/Loading.hide()
+				$LOWER/Text.text = "[b]Parkour Running...[/b]\nGame running..."
+				$LOWER/Bar.show_percentage=false
+			else:
+				_on_retry_pressed()
+		else:
+			downloader.request(dat.mirror)
+			Dsize_bytes = dat.size  # bytes
+			downloading = true
+			
 func calcPercentage(partialValue, totalValue) -> float:
 	return float(partialValue / totalValue) * 100.0
 
@@ -82,10 +107,12 @@ func _on_downloader_request_completed(result: int, response_code: int, headers: 
 	downloading = false
 
 func _on_retry_pressed() -> void:
+	$LOWER/Retry.text = "RETRY"
+	$LOWER/Bar.show_percentage=true
 	$LOWER/Retry.hide()
 	$LOWER/Loading.show()
 	$LOWER/Bar.show()
-	downloader.download_file = "user://Parkour.exe"
+	downloader.download_file = ProjectSettings.globalize_path("user://Parkour.exe")
 	$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nRetrieving necessary data..."
 
 	github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
@@ -110,4 +137,5 @@ func is_process_running(process_name: String) -> bool:
 		return count > 0
 	return false
 func _ready() -> void:
-	print(FileAccess.get_file_as_bytes("user://Parkour.exe").size())
+	if FileAccess.file_exists(ProjectSettings.globalize_path("user://Parkour.exe")):
+		$Play.text = "Launch\nParkour"
