@@ -4,12 +4,11 @@ var holding := false
 var last_pos := Vector2i()
 @onready var downloader: HTTPRequest = $Downloader
 @onready var github: HTTPRequest = $GithubGetter
-
 var downloading := false
 var last_bytes := 0
 var current_bytes := 0
 var Dsize_bytes := 0  # size in bytes now
-
+signal terminated
 var last_time := 0.0
 var speed := 0.0 # MB/s decimal
 
@@ -57,7 +56,6 @@ func _on_play_pressed() -> void:
 		$LOWER/Bar.show()
 		downloader.download_file = ProjectSettings.globalize_path("user://Parkour.exe")
 		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nRetrieving necessary data..."
-
 		github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
 		var gh = await github.request_completed
 		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nPreparing..."
@@ -72,7 +70,7 @@ func _on_play_pressed() -> void:
 		var gh = await github.request_completed
 		var dat = JSON.parse_string(gh[3].get_string_from_utf8())
 		await get_tree().create_timer(0.5).timeout
-		if FileAccess.get_file_as_bytes(ProjectSettings.globalize_path("user://Parkour.exe")).size() >= dat.size - 50:
+		if FileAccess.get_file_as_bytes(ProjectSettings.globalize_path("user://Parkour.exe")).size() >= dat.size - 10000:
 			$LOWER/Text.text = "[b]Launching Parkour...[/b]\nRunning Parkour.exe..."
 			OS.shell_open(ProjectSettings.globalize_path("user://Parkour.exe"))
 			await get_tree().create_timer(2.0).timeout
@@ -82,8 +80,10 @@ func _on_play_pressed() -> void:
 				$LOWER/Loading.hide()
 				$LOWER/Text.text = "[b]Parkour Running...[/b]\nGame running..."
 				$LOWER/Bar.show_percentage=false
+				await terminated
+				$Anim.play_backwards("play")
 			else:
-				_on_retry_pressed()
+				_on_retry_pressed() 
 		else:
 			downloader.request(dat.mirror)
 			Dsize_bytes = dat.size  # bytes
@@ -95,6 +95,10 @@ func calcPercentage(partialValue, totalValue) -> float:
 func _on_downloader_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	if result == OK:
 		print("done: ", result)
+		copy_from_res("res://discord_game_sdk_x86.dll", "user://discord_game_sdk_x86.dll")
+		copy_from_res("res://discord_game_sdk.dll", "user://discord_game_sdk.dll")
+		copy_from_res("res://discord_game_sdk_binding.dll", "user://discord_game_sdk_binding.dll")
+		copy_from_res("res://discord_game_sdk_binding_debug.dll", "user://discord_game_sdk_binding_debug.dll")
 	else:
 		print(str("err: ", result))
 		if result == 4:
@@ -107,12 +111,16 @@ func _on_downloader_request_completed(result: int, response_code: int, headers: 
 	downloading = false
 
 func _on_retry_pressed() -> void:
+	if is_process_running("Parkour"):
+		OS.kill(get_pid("Parkour"))
+		await terminated
+		$Anim.play_backwards("play")
+		return
 	$LOWER/Retry.text = "RETRY"
 	$LOWER/Bar.show_percentage=true
 	$LOWER/Retry.hide()
 	$LOWER/Loading.show()
 	$LOWER/Bar.show()
-	downloader.download_file = ProjectSettings.globalize_path("user://Parkour.exe")
 	$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nRetrieving necessary data..."
 
 	github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
@@ -127,15 +135,43 @@ func is_process_running(process_name: String) -> bool:
 	if OS.get_name() != "Windows":
 		return false
 	var output = []
+	OS.execute("tasklist", [], output)
+	for line in output:
+		if process_name+".exe".to_lower() in line.to_lower():
+			return true
+	return false
+
+func get_pid(process_name: String) -> int:
+	if OS.get_name() != "Windows":
+		return 0
+	var output = []
 	OS.execute(
 		"powershell.exe",
-		["-NoProfile", "-NonInteractive", "-Command", "Get-Process -Name %s | Measure-Object | Select-Object -ExpandProperty Count" % process_name],
-		output
+		["Get-Process -Name %s | Select-Object -ExpandProperty Id" % process_name],
+		output,
 	)
 	if output.size() > 0:
 		var count = output[0].to_int()
-		return count > 0
-	return false
+		return count
+	return 0
 func _ready() -> void:
+	check()
 	if FileAccess.file_exists(ProjectSettings.globalize_path("user://Parkour.exe")):
 		$Play.text = "Launch\nParkour"
+	downloader.download_file = ProjectSettings.globalize_path("user://Parkour.exe")
+static func copy_from_res(from: String, to: String, chmod_flags: int=-1) -> void:
+	var file_from = FileAccess.open(from, FileAccess.READ)
+	var file_to = FileAccess.open(to, FileAccess.WRITE)
+	file_to.store_buffer(file_from.get_buffer(file_from.get_length()))
+	file_to = null
+	file_from = null
+	if chmod_flags != -1:
+		var output = []
+		OS.execute("chmod", [chmod_flags, ProjectSettings.globalize_path(to)], output, true)
+func check():
+	if $LOWER/Text.text == "[b]Parkour Running...[/b]\nGame running...":
+		if !is_process_running("Parkour"):
+			terminated.emit()
+			$LOWER/Text.text = "[b]Parkour Running...[/b]\nGame stopped..."
+	await get_tree().create_timer(5.0).timeout
+	check()
