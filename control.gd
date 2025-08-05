@@ -11,7 +11,7 @@ var Dsize_bytes := 0  # size in bytes now
 signal terminated
 var last_time := 0.0
 var speed := 0.0 # MB/s decimal
-
+var eta:="-"
 func _on_sensor_button_down() -> void:
 	holding = true
 	last_pos = get_local_mouse_position()
@@ -33,12 +33,25 @@ func _process(delta: float) -> void:
 			last_time = now_time
 			last_bytes = current_bytes
 
+		# ETA calculation
+		var remaining_bytes = Dsize_bytes - current_bytes
+		if speed > 0.01:
+			var seconds_remaining = int(remaining_bytes / (speed * 1_000_000.0))
+			if seconds_remaining < 60:
+				eta = "%dsec" % seconds_remaining
+			else:
+				eta = "%dmin" % int(seconds_remaining / 60)
+		else:
+			eta = "-"
+
+
 		var downloaded_mb = snapped(current_bytes / 1_000_000.0, 0.1)
 		var total_mb = snapped(Dsize_bytes / 1_000_000.0, 0.1)
 		var speed_str = "%.1f" % speed
 
-		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\n%s / %sMB - %sMB/s" % [downloaded_mb, total_mb, speed_str]
+		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\n%s / %sMB - %sMB/s\n  ETA: %s" % [downloaded_mb, total_mb, speed_str, eta]
 		$LOWER/Bar.value = calcPercentage(downloaded_mb, total_mb)
+
 
 func _on_x_pressed() -> void:
 	get_tree().quit()
@@ -82,8 +95,7 @@ func _on_play_pressed() -> void:
 				$LOWER/Bar.show_percentage=false
 				await terminated
 				$Anim.play_backwards("play")
-			else:
-				_on_retry_pressed() 
+			else: _on_retry_pressed()
 		else:
 			downloader.request(dat.mirror)
 			Dsize_bytes = dat.size  # bytes
@@ -95,6 +107,8 @@ func calcPercentage(partialValue, totalValue) -> float:
 func _on_downloader_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	if result == OK:
 		print("done: ", result)
+		$Anim.play_backwards("play")
+		_ready()
 		copy_from_res("res://discord_game_sdk_x86.dll", "user://discord_game_sdk_x86.dll")
 		copy_from_res("res://discord_game_sdk.dll", "user://discord_game_sdk.dll")
 		copy_from_res("res://discord_game_sdk_binding.dll", "user://discord_game_sdk_binding.dll")
@@ -132,15 +146,7 @@ func _on_retry_pressed() -> void:
 	Dsize_bytes = dat.size  # bytes
 	downloading = true
 func is_process_running(process_name: String) -> bool:
-	if OS.get_name() != "Windows":
-		return false
-	var output = []
-	OS.execute("tasklist", [], output)
-	for line in output:
-		if process_name+".exe".to_lower() in line.to_lower():
-			return true
-	return false
-
+	return OS.is_process_running(get_pid(process_name))
 func get_pid(process_name: String) -> int:
 	if OS.get_name() != "Windows":
 		return 0
