@@ -63,7 +63,8 @@ func _on__pressed() -> void:
 func _on_play_pressed() -> void:
 	$LOWER/Retry.text = "RETRY"
 	$LOWER/Bar.show_percentage=true
-	$Anim.play("play")
+	if !$LOWER/Text.text == "[b]Launching Parkour...[/b]\nChecking for updates failed.":
+		$Anim.play("play")
 	if !FileAccess.file_exists(ProjectSettings.globalize_path("user://Parkour.exe")):
 		$LOWER/Retry.hide()
 		$LOWER/Loading.show()
@@ -74,12 +75,19 @@ func _on_play_pressed() -> void:
 		var gh = await github.request_completed
 		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nPreparing..."
 		var dat = JSON.parse_string(gh[3].get_string_from_utf8())
-		downloader.request(dat.mirror)
-		Dsize_bytes = dat.size  # now in bytes
-		downloading = true
+		if dat != null:
+			downloader.request(dat.mirror)
+			Dsize_bytes = dat.size  # now in bytes
+			downloading = true
+		else:
+			$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nDownload failed..."
+			$LOWER/Retry.show()
+			$LOWER/Loading.hide()
 	else:
 		$LOWER/Text.text = "[b]Launching Parkour...[/b]\nChecking for updates..."
-		if await latest_version():
+		var check = await latest_version()
+		if check is String: return
+		if check:
 			$LOWER/Bar.value = 100
 			check()
 			$LOWER/Text.text = "[b]Launching Parkour...[/b]\nCalculating bytes..."
@@ -102,9 +110,14 @@ func _on_play_pressed() -> void:
 				else:
 					_on_retry_pressed()
 			else:
-				downloader.request(dat.mirror)
-				Dsize_bytes = dat.size  # bytes
-				downloading = true
+				if dat != null:
+					downloader.request(dat.mirror)
+					Dsize_bytes = dat.size  # now in bytes
+					downloading = true
+				else:
+					$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nDownload failed..."
+					$LOWER/Retry.show()
+					$LOWER/Loading.hide()
 		else:
 			$LOWER/Retry.hide()
 			$LOWER/Loading.show()
@@ -115,21 +128,33 @@ func _on_play_pressed() -> void:
 			var gh = await github.request_completed
 			$LOWER/Text.text = "[b]Updating Parkour...[/b]\nPreparing..."
 			var dat = JSON.parse_string(gh[3].get_string_from_utf8())
-			downloader.request(dat.mirror)
-			Dsize_bytes = dat.size  # now in bytes
-			updating = true
+			if dat != null:
+				downloader.request(dat.mirror)
+				Dsize_bytes = dat.size  # now in bytes
+				updating = true
+			else:
+				$LOWER/Text.text = "[b]Updating Parkour...[/b]\nUpdate failed..."
+				$LOWER/Retry.show()
+				$LOWER/Loading.hide()
 func calcPercentage(partialValue, totalValue) -> float:
 	return float(partialValue / totalValue) * 100.0
 
 func _on_downloader_request_completed(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray) -> void:
 	if result == OK:
 		print("done: ", result)
-		$Anim.play_backwards("play")
-		_ready()
 		copy_from_res("res://discord_game_sdk_x86.dll", "user://discord_game_sdk_x86.dll")
 		copy_from_res("res://discord_game_sdk.dll", "user://discord_game_sdk.dll")
 		copy_from_res("res://discord_game_sdk_binding.dll", "user://discord_game_sdk_binding.dll")
 		copy_from_res("res://discord_game_sdk_binding_debug.dll", "user://discord_game_sdk_binding_debug.dll")
+		var file = FileAccess.open("user://version.vfile",FileAccess.WRITE)
+		github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/latest-version.json")
+		var dat = await github.request_completed
+		var dat3 = JSON.parse_string(dat[3].get_string_from_utf8())
+		file.store_var(dat3.version)
+		$LOWER/Retry.hide()
+		$LOWER/Loading.show()
+		$Anim.play_backwards("play")
+		_ready()
 	else:
 		print(str("err: ", result))
 		if result == 4:
@@ -142,10 +167,13 @@ func _on_downloader_request_completed(result: int, response_code: int, headers: 
 	downloading = false
 	updating = false
 func _on_retry_pressed() -> void:
+	if $LOWER/Text.text == "[b]Launching Parkour...[/b]\nChecking for updates failed.":
+		_on_play_pressed()
 	if is_process_running("Parkour"):
 		$LOWER/Loading.show()
 		$LOWER/Retry.hide()
 		$LOWER/Text.text = "[b]Quitting Parkour...[/b]\nKilling Parkour.exe"
+		await get_tree().create_timer(0.5).timeout
 		OS.kill(get_pid("Parkour"))
 		await get_tree().create_timer(1.5).timeout
 		if is_process_running("Parkour"):
@@ -166,9 +194,14 @@ func _on_retry_pressed() -> void:
 	$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nPreparing..."
 
 	var dat = JSON.parse_string(gh[3].get_string_from_utf8())
-	downloader.request(dat.mirror)
-	Dsize_bytes = dat.size  # bytes
-	downloading = true
+	if dat != null:
+		downloader.request(dat.mirror)
+		Dsize_bytes = dat.size  # now in bytes
+		downloading = true
+	else:
+		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nDownload failed..."
+		$LOWER/Retry.show()
+		$LOWER/Loading.hide()
 func is_process_running(process_name: String) -> bool:
 	return get_pid(process_name) != 0
 func get_pid(process_name: String) -> int:
@@ -210,6 +243,12 @@ func latest_version():
 		var dat = await github.request_completed
 		var dat3 = JSON.parse_string(dat[3].get_string_from_utf8())
 		var file = FileAccess.open("user://version.vfile",FileAccess.READ)
-		if dat3.version <= file.get_var():
-			return true
+		if dat3 != null:
+			if dat3.version <= file.get_var():
+				return true
+		else:
+			$LOWER/Text.text = "[b]Launching Parkour...[/b]\nChecking for updates failed."
+			$LOWER/Retry.show()
+			$LOWER/Loading.hide()
+			return ""
 	return false

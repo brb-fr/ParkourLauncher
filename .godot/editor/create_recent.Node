@@ -1,10 +1,11 @@
-ColorRect
 Label
-BorDR
-Panel
+TextureRect
+VBoxContainer
 Button
+ColorRect
+Panel
+Control
 RichTextLabel
 HTTPRequest
 AnimationPlayer
 ProgressBar
-TextureRect
