@@ -6,6 +6,7 @@ var last_pos := Vector2i()
 @onready var github: HTTPRequest = $GithubGetter
 var downloading := false
 var last_bytes := 0
+var updating := false
 var current_bytes := 0
 var Dsize_bytes := 0  # size in bytes now
 signal terminated
@@ -23,7 +24,7 @@ func _process(delta: float) -> void:
 	if holding:
 		DisplayServer.window_set_position(DisplayServer.mouse_get_position() - last_pos)
 	
-	if downloading:
+	if downloading or updating:
 		var now_time = Time.get_ticks_msec() / 1000.0
 		current_bytes = downloader.get_downloaded_bytes()
 
@@ -49,7 +50,7 @@ func _process(delta: float) -> void:
 		var total_mb = snapped(Dsize_bytes / 1_000_000.0, 0.1)
 		var speed_str = "%.1f" % speed
 
-		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\n%s / %sMB - %sMB/s\n  ETA: %s" % [downloaded_mb, total_mb, speed_str, eta]
+		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\n%s / %sMB - %sMB/s\n  ETA: %s" % [downloaded_mb, total_mb, speed_str, eta] if downloading else "[b]Updating Parkour...[/b]\n%s / %sMB - %sMB/s\n  ETA: %s" % [downloaded_mb, total_mb, speed_str, eta]
 		$LOWER/Bar.value = calcPercentage(downloaded_mb, total_mb)
 
 
@@ -77,30 +78,46 @@ func _on_play_pressed() -> void:
 		Dsize_bytes = dat.size  # now in bytes
 		downloading = true
 	else:
-		$LOWER/Bar.value = 100
-		$LOWER/Text.text = "[b]Launching Parkour...[/b]\nCalculating bytes..."
-		github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
-		var gh = await github.request_completed
-		var dat = JSON.parse_string(gh[3].get_string_from_utf8())
-		await get_tree().create_timer(0.5).timeout
-		if FileAccess.get_file_as_bytes(ProjectSettings.globalize_path("user://Parkour.exe")).size() >= dat.size - 10000:
-			$LOWER/Text.text = "[b]Launching Parkour...[/b]\nRunning Parkour.exe..."
-			OS.shell_open(ProjectSettings.globalize_path("user://Parkour.exe"))
-			await get_tree().create_timer(2.0).timeout
-			if is_process_running("Parkour"):
-				$LOWER/Retry.show()
-				$LOWER/Retry.text = "EXIT"
-				$LOWER/Loading.hide()
-				$LOWER/Text.text = "[b]Parkour Running...[/b]\nGame running..."
-				$LOWER/Bar.show_percentage=false
-				await terminated
-				$Anim.play_backwards("play")
-			else: _on_retry_pressed()
+		$LOWER/Text.text = "[b]Launching Parkour...[/b]\nChecking for updates..."
+		if await latest_version():
+			$LOWER/Bar.value = 100
+			check()
+			$LOWER/Text.text = "[b]Launching Parkour...[/b]\nCalculating bytes..."
+			github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
+			var gh = await github.request_completed
+			var dat = JSON.parse_string(gh[3].get_string_from_utf8())
+			await get_tree().create_timer(0.5).timeout
+			if FileAccess.get_file_as_bytes(ProjectSettings.globalize_path("user://Parkour.exe")).size() >= dat.size - 100000:
+				$LOWER/Text.text = "[b]Launching Parkour...[/b]\nRunning Parkour.exe..."
+				OS.shell_open(ProjectSettings.globalize_path("user://Parkour.exe"))
+				await get_tree().create_timer(1.5).timeout
+				if is_process_running("Parkour"):
+					$LOWER/Retry.show()
+					$LOWER/Retry.text = "EXIT"
+					$LOWER/Loading.hide()
+					$LOWER/Text.text = "[b]Parkour Running...[/b]\nGame running..."
+					$LOWER/Bar.show_percentage=false
+					await terminated
+					$Anim.play_backwards("play")
+				else:
+					_on_retry_pressed()
+			else:
+				downloader.request(dat.mirror)
+				Dsize_bytes = dat.size  # bytes
+				downloading = true
 		else:
+			$LOWER/Retry.hide()
+			$LOWER/Loading.show()
+			$LOWER/Bar.show()
+			downloader.download_file = ProjectSettings.globalize_path("user://Parkour.exe")
+			$LOWER/Text.text = "[b]Updating Parkour...[/b]\nRetrieving necessary data..."
+			github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
+			var gh = await github.request_completed
+			$LOWER/Text.text = "[b]Updating Parkour...[/b]\nPreparing..."
+			var dat = JSON.parse_string(gh[3].get_string_from_utf8())
 			downloader.request(dat.mirror)
-			Dsize_bytes = dat.size  # bytes
-			downloading = true
-			
+			Dsize_bytes = dat.size  # now in bytes
+			updating = true
 func calcPercentage(partialValue, totalValue) -> float:
 	return float(partialValue / totalValue) * 100.0
 
@@ -123,12 +140,19 @@ func _on_downloader_request_completed(result: int, response_code: int, headers: 
 		$LOWER/Loading.hide()
 		$LOWER/Bar.hide()
 	downloading = false
-
+	updating = false
 func _on_retry_pressed() -> void:
 	if is_process_running("Parkour"):
+		$LOWER/Loading.show()
+		$LOWER/Retry.hide()
+		$LOWER/Text.text = "[b]Quitting Parkour...[/b]\nKilling Parkour.exe"
 		OS.kill(get_pid("Parkour"))
-		await terminated
+		await get_tree().create_timer(1.5).timeout
+		if is_process_running("Parkour"):
+			_on_retry_pressed()
+			return
 		$Anim.play_backwards("play")
+		$LOWER/Text.text = "[b]Terminated Parkour.[/b]\nSession terminated"
 		return
 	$LOWER/Retry.text = "RETRY"
 	$LOWER/Bar.show_percentage=true
@@ -146,7 +170,7 @@ func _on_retry_pressed() -> void:
 	Dsize_bytes = dat.size  # bytes
 	downloading = true
 func is_process_running(process_name: String) -> bool:
-	return OS.is_process_running(get_pid(process_name))
+	return get_pid(process_name) != 0
 func get_pid(process_name: String) -> int:
 	if OS.get_name() != "Windows":
 		return 0
@@ -161,7 +185,6 @@ func get_pid(process_name: String) -> int:
 		return count
 	return 0
 func _ready() -> void:
-	check()
 	if FileAccess.file_exists(ProjectSettings.globalize_path("user://Parkour.exe")):
 		$Play.text = "Launch\nParkour"
 	downloader.download_file = ProjectSettings.globalize_path("user://Parkour.exe")
@@ -179,5 +202,14 @@ func check():
 		if !is_process_running("Parkour"):
 			terminated.emit()
 			$LOWER/Text.text = "[b]Parkour Running...[/b]\nGame stopped..."
-	await get_tree().create_timer(5.0).timeout
+	await get_tree().create_timer(7.5).timeout
 	check()
+func latest_version():
+	if FileAccess.file_exists("user://version.vfile"):
+		github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/latest-version.json")
+		var dat = await github.request_completed
+		var dat3 = JSON.parse_string(dat[3].get_string_from_utf8())
+		var file = FileAccess.open("user://version.vfile",FileAccess.READ)
+		if dat3.version <= file.get_var():
+			return true
+	return false

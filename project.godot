@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="ParkourLauncher"
-config/version="1.4"
+config/version="2.0"
 run/main_scene="uid://clq2a487longv"
 config/quit_on_go_back=false
 config/features=PackedStringArray("4.4", "GL Compatibility")
@@ -33,6 +33,10 @@ window/stretch/mode="viewport"
 window/stretch/aspect="expand"
 window/per_pixel_transparency/allowed=true
 window/handheld/orientation=1
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/bordr/plugin.cfg")
 
 [rendering]
 

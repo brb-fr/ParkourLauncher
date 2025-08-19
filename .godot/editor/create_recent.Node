@@ -1,9 +1,10 @@
+ColorRect
 Label
+BorDR
+Panel
 Button
 RichTextLabel
 HTTPRequest
 AnimationPlayer
 ProgressBar
-Panel
 TextureRect
-ColorRect
