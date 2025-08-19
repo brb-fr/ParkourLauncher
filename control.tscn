@@ -186,7 +186,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.35),
 "transitions": PackedFloat32Array(-2, -2),
 "update": 0,
-"values": [Vector2(0, 44), Vector2(0, -504)]
+"values": [Vector2(0, 48), Vector2(0, -504)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -306,7 +306,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = 48.0
 offset_right = -53.0
-offset_bottom = -56.0
+offset_bottom = -106.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -332,7 +332,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = 600.0
 offset_right = -53.0
-offset_bottom = 500.0
+offset_bottom = 450.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -536,12 +536,13 @@ Parkour"
 
 [node name="Status" type="Label" parent="Play"]
 layout_mode = 1
-anchors_preset = 9
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 192.0
-offset_top = -0.000976563
-offset_right = 321.0
-offset_bottom = -0.0010376
+offset_left = 10.0
+offset_right = 128.0
+grow_horizontal = 0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 12
 text = "Not downloaded yet"
