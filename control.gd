@@ -21,6 +21,7 @@ func _on_sensor_button_up() -> void:
 	holding = false
 
 func _process(delta: float) -> void:
+	$Home/Changelogs.focus_mode = Control.FOCUS_NONE
 	if holding:
 		DisplayServer.window_set_position(DisplayServer.mouse_get_position() - last_pos)
 	
@@ -234,13 +235,16 @@ func get_pid(process_name: String) -> int:
 		return count
 	return 0
 func _ready() -> void:
+	eta = "-"
 	if FileAccess.file_exists("user://version.vfile"):
 		$Play/Status.text = "Downloaded %s"%FileAccess.open("user://version.vfile",FileAccess.READ).get_var()
 	else: $Play/Status.text = "Not downloaded yet"
 	if FileAccess.file_exists(ProjectSettings.globalize_path("user://Parkour.exe")):
 		$Play.text = "Launch\nParkour"
 		$Settings/Unins/Button.disabled = false
-	else: $Settings/Unins/Button.disabled = true
+	else:
+		$Settings/Unins/Button.disabled = true
+		$Play.text = "Download\nParkour"
 	downloader.download_file = ProjectSettings.globalize_path("user://Parkour.exe")
 	$Changelogs.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/latest-version.json")
 	var dat = await $Changelogs.request_completed
