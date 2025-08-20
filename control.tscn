@@ -310,20 +310,24 @@ offset_bottom = -106.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="Home"]
+[node name="Changelogs" type="RichTextLabel" parent="Home"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -11.5
-offset_right = 20.0
-offset_bottom = 11.5
+offset_left = -88.5
+offset_top = -49.0
+offset_right = 88.5
+offset_bottom = 49.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "Home"
+bbcode_enabled = true
+text = "[center]Loading..."
+vertical_alignment = 1
+selection_enabled = true
+drag_and_drop_selection_enabled = false
 
 [node name="Settings" type="Control" parent="."]
 layout_mode = 1
@@ -409,10 +413,10 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -98.0
-offset_top = 16.0
+offset_left = -90.0
+offset_top = 19.0
 offset_right = -18.0
-offset_bottom = -16.0
+offset_bottom = -20.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_styles/focus = SubResource("StyleBoxEmpty_fj5cn")
@@ -478,6 +482,7 @@ theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_sky72")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_sky72")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_sky72")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_sky72")
+action_mode = 0
 text = "Home"
 icon = ExtResource("5_iy58a")
 icon_alignment = 1
@@ -512,6 +517,7 @@ theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_sky72")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_sky72")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_sky72")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_sky72")
+action_mode = 0
 text = "Options"
 icon = ExtResource("6_6a6wx")
 icon_alignment = 1
@@ -540,8 +546,8 @@ anchors_preset = 11
 anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_right = 128.0
+offset_left = 8.0
+offset_right = 126.0
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_font_sizes/font_size = 12
@@ -566,6 +572,8 @@ use_threads = true
 [node name="GithubGetter" type="HTTPRequest" parent="."]
 download_chunk_size = 450000
 use_threads = true
+
+[node name="Changelogs" type="HTTPRequest" parent="."]
 
 [node name="UP" type="ColorRect" parent="."]
 layout_mode = 1

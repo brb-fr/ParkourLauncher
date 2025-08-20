@@ -221,6 +221,10 @@ func _ready() -> void:
 	if FileAccess.file_exists(ProjectSettings.globalize_path("user://Parkour.exe")):
 		$Play.text = "Launch\nParkour"
 	downloader.download_file = ProjectSettings.globalize_path("user://Parkour.exe")
+	$Changelogs.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/latest-version.json")
+	var dat = await $Changelogs.request_completed
+	var dat3 = JSON.parse_string(dat[3].get_string_from_utf8())
+	$Home/Changelogs.text = "[center][b]v%s Changelogs[/b]:%s"%[dat3.version, dat3.changelog]
 static func copy_from_res(from: String, to: String, chmod_flags: int=-1) -> void:
 	var file_from = FileAccess.open(from, FileAccess.READ)
 	var file_to = FileAccess.open(to, FileAccess.WRITE)
@@ -244,7 +248,7 @@ func latest_version():
 		var dat3 = JSON.parse_string(dat[3].get_string_from_utf8())
 		var file = FileAccess.open("user://version.vfile",FileAccess.READ)
 		if dat3 != null:
-			if dat3.version <= file.get_var():
+			if float(dat3.version) <= float(file.get_var()):
 				return true
 		else:
 			$LOWER/Text.text = "[b]Launching Parkour...[/b]\nChecking for updates failed."

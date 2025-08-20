@@ -1,3 +1,5 @@
+HTTPRequest
+RichTextLabel
 Label
 TextureRect
 VBoxContainer
@@ -5,7 +7,5 @@ Button
 ColorRect
 Panel
 Control
-RichTextLabel
-HTTPRequest
 AnimationPlayer
 ProgressBar
