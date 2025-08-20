@@ -1,9 +1,9 @@
+Button
+Label
 HTTPRequest
 RichTextLabel
-Label
 TextureRect
 VBoxContainer
-Button
 ColorRect
 Panel
 Control

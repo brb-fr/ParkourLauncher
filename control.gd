@@ -79,17 +79,23 @@ func _on_play_pressed() -> void:
 			downloader.request(dat.mirror)
 			Dsize_bytes = dat.size  # now in bytes
 			downloading = true
+			$Settings/Unins/Button.disabled = true
 		else:
 			$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nDownload failed..."
 			$LOWER/Retry.show()
 			$LOWER/Loading.hide()
+			$Settings/Unins/Button.disabled = false
 	else:
+		$Settings/Unins/Button.disabled = true
 		$LOWER/Text.text = "[b]Launching Parkour...[/b]\nChecking for updates..."
 		var check = await latest_version()
-		if check is String: return
+		if check is String: 
+			$Settings/Unins/Button.disabled = false
+			return
 		if check:
 			$LOWER/Bar.value = 100
 			check()
+			$Settings/Unins/Button.disabled = true
 			$LOWER/Text.text = "[b]Launching Parkour...[/b]\nCalculating bytes..."
 			github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
 			var gh = await github.request_completed
@@ -103,9 +109,11 @@ func _on_play_pressed() -> void:
 					$LOWER/Retry.show()
 					$LOWER/Retry.text = "EXIT"
 					$LOWER/Loading.hide()
+					$Settings/Unins/Button.disabled = true
 					$LOWER/Text.text = "[b]Parkour Running...[/b]\nGame running..."
 					$LOWER/Bar.show_percentage=false
 					await terminated
+					$Settings/Unins/Button.disabled = false
 					$Anim.play_backwards("play")
 				else:
 					_on_retry_pressed()
@@ -114,10 +122,12 @@ func _on_play_pressed() -> void:
 					downloader.request(dat.mirror)
 					Dsize_bytes = dat.size  # now in bytes
 					downloading = true
+					$Settings/Unins/Button.disabled = true
 				else:
 					$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nDownload failed..."
 					$LOWER/Retry.show()
 					$LOWER/Loading.hide()
+					$Settings/Unins/Button.disabled = false
 		else:
 			$LOWER/Retry.hide()
 			$LOWER/Loading.show()
@@ -132,10 +142,12 @@ func _on_play_pressed() -> void:
 				downloader.request(dat.mirror)
 				Dsize_bytes = dat.size  # now in bytes
 				updating = true
+				$Settings/Unins/Button.disabled = true
 			else:
 				$LOWER/Text.text = "[b]Updating Parkour...[/b]\nUpdate failed..."
 				$LOWER/Retry.show()
 				$LOWER/Loading.hide()
+				$Settings/Unins/Button.disabled = false
 func calcPercentage(partialValue, totalValue) -> float:
 	return float(partialValue / totalValue) * 100.0
 
@@ -146,15 +158,15 @@ func _on_downloader_request_completed(result: int, response_code: int, headers: 
 		copy_from_res("res://discord_game_sdk.dll", "user://discord_game_sdk.dll")
 		copy_from_res("res://discord_game_sdk_binding.dll", "user://discord_game_sdk_binding.dll")
 		copy_from_res("res://discord_game_sdk_binding_debug.dll", "user://discord_game_sdk_binding_debug.dll")
-		var file = FileAccess.open("user://version.vfile",FileAccess.WRITE)
 		github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/latest-version.json")
 		var dat = await github.request_completed
 		var dat3 = JSON.parse_string(dat[3].get_string_from_utf8())
-		file.store_var(dat3.version)
+		FileAccess.open("user://version.vfile",FileAccess.WRITE).store_var(dat3.version)
 		$LOWER/Retry.hide()
 		$LOWER/Loading.show()
 		$Anim.play_backwards("play")
 		_ready()
+		$Settings/Unins/Button.disabled = false
 	else:
 		print(str("err: ", result))
 		if result == 4:
@@ -166,6 +178,7 @@ func _on_downloader_request_completed(result: int, response_code: int, headers: 
 		$LOWER/Bar.hide()
 	downloading = false
 	updating = false
+	$Settings/Unins/Button.disabled = false
 func _on_retry_pressed() -> void:
 	if $LOWER/Text.text == "[b]Launching Parkour...[/b]\nChecking for updates failed.":
 		_on_play_pressed()
@@ -179,9 +192,11 @@ func _on_retry_pressed() -> void:
 		if is_process_running("Parkour"):
 			_on_retry_pressed()
 			return
+		$Settings/Unins/Button.disabled = false
 		$Anim.play_backwards("play")
 		$LOWER/Text.text = "[b]Terminated Parkour.[/b]\nSession terminated"
 		return
+	$Settings/Unins/Button.disabled = true
 	$LOWER/Retry.text = "RETRY"
 	$LOWER/Bar.show_percentage=true
 	$LOWER/Retry.hide()
@@ -192,16 +207,17 @@ func _on_retry_pressed() -> void:
 	github.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/mirror")
 	var gh = await github.request_completed
 	$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nPreparing..."
-
 	var dat = JSON.parse_string(gh[3].get_string_from_utf8())
 	if dat != null:
 		downloader.request(dat.mirror)
 		Dsize_bytes = dat.size  # now in bytes
 		downloading = true
+		$Settings/Unins/Button.disabled = true
 	else:
 		$LOWER/Text.text = "[b]Downloading Parkour...[/b]\nDownload failed..."
 		$LOWER/Retry.show()
 		$LOWER/Loading.hide()
+		$Settings/Unins/Button.disabled = false
 func is_process_running(process_name: String) -> bool:
 	return get_pid(process_name) != 0
 func get_pid(process_name: String) -> int:
@@ -218,8 +234,13 @@ func get_pid(process_name: String) -> int:
 		return count
 	return 0
 func _ready() -> void:
+	if FileAccess.file_exists("user://version.vfile"):
+		$Play/Status.text = "Downloaded %s"%FileAccess.open("user://version.vfile",FileAccess.READ).get_var()
+	else: $Play/Status.text = "Not downloaded yet"
 	if FileAccess.file_exists(ProjectSettings.globalize_path("user://Parkour.exe")):
 		$Play.text = "Launch\nParkour"
+		$Settings/Unins/Button.disabled = false
+	else: $Settings/Unins/Button.disabled = true
 	downloader.download_file = ProjectSettings.globalize_path("user://Parkour.exe")
 	$Changelogs.request("https://raw.githubusercontent.com/brb-fr/Parkour-Updates/refs/heads/main/latest-version.json")
 	var dat = await $Changelogs.request_completed
@@ -239,6 +260,7 @@ func check():
 		if !is_process_running("Parkour"):
 			terminated.emit()
 			$LOWER/Text.text = "[b]Parkour Running...[/b]\nGame stopped..."
+			$Settings/Unins/Button.disabled = false
 	await get_tree().create_timer(7.5).timeout
 	check()
 func latest_version():
@@ -248,11 +270,21 @@ func latest_version():
 		var dat3 = JSON.parse_string(dat[3].get_string_from_utf8())
 		var file = FileAccess.open("user://version.vfile",FileAccess.READ)
 		if dat3 != null:
-			if float(dat3.version) <= float(file.get_var()):
+			if dat3.version == file.get_var():
 				return true
+			else:
+				return false
 		else:
 			$LOWER/Text.text = "[b]Launching Parkour...[/b]\nChecking for updates failed."
 			$LOWER/Retry.show()
+			$Settings/Unins/Button.disabled = false
 			$LOWER/Loading.hide()
 			return ""
 	return false
+
+
+func uninstall() -> void:
+	DirAccess.remove_absolute("user://Parkour.exe")
+	DirAccess.remove_absolute("user://version.vfile")
+	$Settings/Unins/Button.disabled = true
+	_ready()
