@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b8uwlkspwduxq"
-path="res://.godot/imported/parkour-rounded.png-150c50be2dec97c793aa3a3452ad1f35.ctex"
+path="res://godot/imported/parkour-rounded.png-150c50be2dec97c793aa3a3452ad1f35.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://parkour-rounded.png"
-dest_files=["res://.godot/imported/parkour-rounded.png-150c50be2dec97c793aa3a3452ad1f35.ctex"]
+dest_files=["res://godot/imported/parkour-rounded.png-150c50be2dec97c793aa3a3452ad1f35.ctex"]
 
 [params]
 

@@ -292,3 +292,7 @@ func uninstall() -> void:
 	DirAccess.remove_absolute("user://version.vfile")
 	$Settings/Unins/Button.disabled = true
 	_ready()
+
+
+func _on_button_pressed() -> void:
+	OS.shell_open(ProjectSettings.globalize_path("user://"))

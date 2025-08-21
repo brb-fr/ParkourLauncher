@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://clq2a487longv"]
+[gd_scene load_steps=28 format=3 uid="uid://clq2a487longv"]
 
 [ext_resource type="Texture2D" uid="uid://b8uwlkspwduxq" path="res://parkour-rounded.png" id="1_0fbet"]
 [ext_resource type="Script" uid="uid://drhi7gjr2u4bj" path="res://control.gd" id="1_62e2m"]
@@ -20,6 +20,13 @@ corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0ytqx"]
 bg_color = Color(0.894118, 0.0862745, 0.0862745, 0.647059)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pxugv"]
+bg_color = Color(0.0862745, 0.411765, 0.894118, 0.647059)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
@@ -339,6 +346,7 @@ offset_right = 88.5
 offset_bottom = 47.0
 grow_horizontal = 2
 grow_vertical = 2
+focus_mode = 2
 bbcode_enabled = true
 text = "[center]Loading..."
 vertical_alignment = 1
@@ -363,10 +371,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -70.0
-offset_top = -11.5
-offset_right = 70.0
-offset_bottom = 11.5
+offset_left = -69.5
+offset_top = -72.0
+offset_right = 70.5
+offset_bottom = -49.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "Uninstall Parkour:"
@@ -396,6 +404,48 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_0ytqx")
 theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_0ytqx")
 theme_override_styles/normal = SubResource("StyleBoxFlat_0ytqx")
 text = "Uninstall"
+
+[node name="Open" type="Label" parent="Settings"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -70.0
+offset_top = 49.0
+offset_right = 70.0
+offset_bottom = 72.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Open User Folder:"
+horizontal_alignment = 1
+
+[node name="Button" type="Button" parent="Settings/Open"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -38.5
+offset_top = 6.5
+offset_right = 38.5
+offset_bottom = 37.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/focus = SubResource("StyleBoxEmpty_6a6wx")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxFlat_pxugv")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_pxugv")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_pxugv")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_pxugv")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_pxugv")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pxugv")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_pxugv")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pxugv")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_pxugv")
+theme_override_styles/normal = SubResource("StyleBoxFlat_pxugv")
+text = "Open"
 
 [node name="LOWER" type="Panel" parent="."]
 visible = false
@@ -729,6 +779,7 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_uchyk")
 text = "-"
 
 [connection signal="pressed" from="Settings/Unins/Button" to="." method="uninstall"]
+[connection signal="pressed" from="Settings/Open/Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="LOWER/Retry" to="." method="_on_retry_pressed"]
 [connection signal="pressed" from="RIGHT/Container/Home" to="RIGHT" method="_on_home_pressed"]
 [connection signal="pressed" from="RIGHT/Container/Settings" to="RIGHT" method="_on_settings_pressed"]
